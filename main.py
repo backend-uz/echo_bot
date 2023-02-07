@@ -1,6 +1,6 @@
 import requests
 
-TOKEN = '5661659754:AAGPPm7mkuylCre31dUmOBcXN3cgULdoqSQ'
+TOKEN = '1950937652:AAGc_5TlnoAyuZdwGAago1E8msTLc1xtmec'
 
 def get_last_updates():
     """
@@ -13,9 +13,10 @@ def get_last_updates():
         str(text): Message text
         int(update_id): Telegram update id
     """
-    pass
+    r = requests.get(f"https://api.telegram.org/bot{TOKEN}/getUpdates")
+    return r.json()
 
-def send_message(chat_id, text):
+def send_message():
     """
     Use this function to send text messages.
 
@@ -25,4 +26,19 @@ def send_message(chat_id, text):
     Returns:
         None
     """
-    pass
+
+    user_msg = get_last_updates()['result'][-1]['message']
+
+    payload = {
+        "chat_id":f"{user_msg['chat']['id']}",
+        "text":f"||{user_msg['text']}||",
+        "reply_to_message_id":f"{user_msg['message_id']}",
+        "parse_mode":"MarkdownV2",
+        "protect_content":True,
+            }
+    
+    r = requests.get(f"https://api.telegram.org/bot{TOKEN}/sendMessage", params=payload)
+    
+    return r.json()
+
+print(send_message())
